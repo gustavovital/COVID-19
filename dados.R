@@ -47,10 +47,6 @@ data <- confirmed_clean %>%
   full_join(recovered_clean) %>% 
   select(`Country/Region`, Date, Total, Case)
   
-data %>% 
-  pivot_wider(names_from = Case, values_from = Total) -> data_wider
-
 saveRDS(data, "data.rds")
-saveRDS(data_wider, "data_wider.rds")
 
 rm(list = ls())
