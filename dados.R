@@ -45,8 +45,14 @@ recovered_clean$Case <- 'Recovered'
 data <- confirmed_clean %>% 
   full_join(deaths_clean) %>% 
   full_join(recovered_clean) %>% 
-  select(`Country/Region`, Date, Total, Case)
+  select(`Country/Region`, Date, Total, Case) %>% 
+  group_by(Date, `Country/Region`, Case) %>% 
+  summarise(Total = sum(Total)) 
+  
+data_wider <- data %>% 
+  pivot_wider(names_from = Case, values_from = Total)
   
 saveRDS(data, "data.rds")
+saveRDS(data_wider, "data_wider.rds")
 
 rm(list = ls())

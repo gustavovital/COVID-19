@@ -10,9 +10,13 @@ library(tidyverse)
 # base de dados ----
 
 data <- readRDS('data.rds')
+data_wider <- readRDS('data_wider.rds')
 
 # analise grafica ----
 
 # China ----
 
 data %>% 
+  filter(`Country/Region` == 'Italy') %>% 
+  ggplot(aes(x = Date, y = Total, colour = Case)) +
+  geom_line()
