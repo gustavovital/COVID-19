@@ -16,6 +16,11 @@ data_wider <- readRDS('data_wider.rds')
 
 # analise grafica ----
 
+# Sintomas ----
+
+
+
+
 # China ----
 
 data_wider %>% 
@@ -56,11 +61,14 @@ data_wider %>%
   scale_colour_manual(values = wes_palette("GrandBudapest1", n = 3), name = NULL) +
   
   labs(title = 'Evolução do COVID-19 no Mundo', x = NULL, subtitle = 'De Fevereiro à Março, de acordo com o caso', y = NULL) +
-  coord_flip() +
-  
+
   theme_hc() +
   
   theme(plot.title = element_text(size = 30, family = 'Bookman', colour = 'gray26'),
         plot.subtitle = element_text(size = 23, family = 'Bookman', colour = 'gray46'),
-        legend.position = 'bottom') 
+        legend.position = 'bottom') +
+  
+  gganimate::transition_reveal(Date) -> gif_mundo
+
+gganimate::animate(gif_mundo, fps = 10, width = 700)
 
