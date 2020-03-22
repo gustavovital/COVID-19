@@ -8,6 +8,7 @@
 library(tidyverse)
 library(ggthemes)
 library(wesanderson)
+library(ggforce)
 
 # base de dados ----
 
@@ -24,11 +25,12 @@ data_wider <- readRDS('data_wider.rds')
 # China ----
 
 data_wider %>% 
-  filter(`Country/Region` == 'Malaysia') %>% 
-  ggplot(aes(Date)) +
-  geom_line(aes(y = Confirmed)) +
-  geom_line(aes(y = Deaths)) +
-  geom_line(aes(y = Recovered)) 
+  filter(`Country/Region` == 'China') %>% 
+  ggplot(aes(Recovered, colour = `Country/Region`, size = Confirmed/Deaths)) +
+  geom_path(aes(y = Confirmed), alpha = .3) +
+  geom_point(aes(y = Confirmed), alpha = .3) +
+  theme_bw() +
+  theme(legend.position = 'bottom')
 
 data %>% 
   filter(Case == 'Confirmed') %>% 
@@ -66,9 +68,51 @@ data_wider %>%
   
   theme(plot.title = element_text(size = 30, family = 'Bookman', colour = 'gray26'),
         plot.subtitle = element_text(size = 23, family = 'Bookman', colour = 'gray46'),
-        legend.position = 'bottom') +
-  
-  gganimate::transition_reveal(Date) -> gif_mundo
+        legend.position = 'bottom') 
 
 gganimate::animate(gif_mundo, fps = 10, width = 700)
 
+# Brasil, EUA, Italia ----
+
+data_wider %>% 
+  filter(`Country/Region` == 'Italy' | `Country/Region` == 'US' | `Country/Region` == 'Brazil') -> compared
+
+compared %>% 
+  filter(`Country/Region` == 'Brazil', Confirmed > 99) -> confirmed_brazil
+
+confirmed_brazil$days <- 1:(nrow(confirmed_brazil))
+
+compared %>% 
+  filter(`Country/Region` == 'US', Confirmed > 99) -> confirmed_US
+
+confirmed_US$days <- 1:(nrow(confirmed_US))
+
+compared %>% 
+  filter(`Country/Region` == 'Italy', Confirmed > 99) -> confirmed_italy
+
+confirmed_italy$days <- 1:(nrow(confirmed_italy))
+
+Confirmed <- tibble(Days = c(confirmed_brazil$days, confirmed_US$days, confirmed_italy$days),
+                    Country = c(confirmed_brazil$`Country/Region`, confirmed_US$`Country/Region`, confirmed_italy$`Country/Region`),
+                    Confirmed = c(confirmed_brazil$Confirmed, confirmed_US$Confirmed, confirmed_italy$Confirmed))
+
+
+
+ggplot(NULL) +
+  geom_bar(aes(y = Confirmed, fill = 'EUA', x = days), data = confirmed_US, stat = "identity", alpha = .8) +
+  geom_bar(aes(y = Confirmed, fill = 'Italia', x = days), data = confirmed_italy, stat = "identity", alpha = .5) +
+  geom_bar(aes(y = Confirmed, fill = 'Brasil', x = days), data = confirmed_brazil, stat = "identity", alpha = .8) +
+  scale_fill_manual(values = wes_palette('GrandBudapest1'), name = NULL) +
+  labs(title = expression(bold('Novos Casos de CoronaVirus')~'(> 100 Casos)'), subtitle = 'Comparação entre Itália x Brasil x EUA', x = 'Dias a partir do 100 caso confirmado', y = NULL,
+       caption = 'Fonte: CSSEGISandData\nElaboração: @gustavoovital') +
+  geom_mark_ellipse(aes(filter = Confirmed == 19100, label = 'EUA:', y = 19100, x = days, description = '19100 casos confirmados no 18 dia'), data = confirmed_US) +
+  geom_mark_ellipse(aes(filter = Confirmed == 12462 & days == 18, label = 'Itália:', y = 12462, x = days, description = '12462 casos confirmados no 18 dia'), data = confirmed_italy) +
+  geom_mark_ellipse(aes(filter = Confirmed == 793 & days == 8, label = 'Dia 8:', y = 793, x = days, description = '793 casos no Brasil, 1694 casos na Itália, 959 nos EUA'), data = confirmed_brazil) +
+  
+  theme_hc() +
+  theme(plot.title.position = 'plot',
+        text = element_text(family = 'Bookman'),
+        plot.title = element_text(size = 25, colour = 'gray25'),
+        plot.subtitle = element_text(size = 25, colour = 'gray45'),
+        plot.caption = element_text(size = 15, colour = 'gray45'))
+  
