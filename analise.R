@@ -12,6 +12,8 @@ library(ggforce)
 
 # base de dados ----
 
+source('dados.R')
+
 data <- readRDS('data.rds')
 data_wider <- readRDS('data_wider.rds')
 
@@ -70,7 +72,6 @@ data_wider %>%
         plot.subtitle = element_text(size = 23, family = 'Bookman', colour = 'gray46'),
         legend.position = 'bottom') 
 
-gganimate::animate(gif_mundo, fps = 10, width = 700)
 
 # Brasil, EUA, Italia ----
 
