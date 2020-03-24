@@ -70,8 +70,9 @@ data_wider %>%
   
   theme(plot.title = element_text(size = 30, family = 'Bookman', colour = 'gray26'),
         plot.subtitle = element_text(size = 23, family = 'Bookman', colour = 'gray46'),
-        legend.position = 'bottom') 
-
+        legend.position = 'bottom') +
+  
+  gganimate::transition_reveal(Date)
 
 # Brasil, EUA, Italia ----
 
@@ -106,9 +107,9 @@ ggplot(NULL) +
   scale_fill_manual(values = wes_palette('GrandBudapest1'), name = NULL) +
   labs(title = expression(bold('Novos Casos de CoronaVirus')~'(> 100 Casos)'), subtitle = 'Comparação entre Itália x Brasil x EUA', x = 'Dias a partir do 100 caso confirmado', y = NULL,
        caption = 'Fonte: CSSEGISandData\nElaboração: @gustavoovital') +
-  geom_mark_ellipse(aes(filter = Confirmed == 19100, label = 'EUA:', y = 19100, x = days, description = '19100 casos confirmados no 18 dia'), data = confirmed_US) +
-  geom_mark_ellipse(aes(filter = Confirmed == 12462 & days == 18, label = 'Itália:', y = 12462, x = days, description = '12462 casos confirmados no 18 dia'), data = confirmed_italy) +
-  geom_mark_ellipse(aes(filter = Confirmed == 793 & days == 8, label = 'Dia 8:', y = 793, x = days, description = '793 casos no Brasil, 1694 casos na Itália, 959 nos EUA'), data = confirmed_brazil) +
+  # geom_mark_ellipse(aes(filter = Confirmed == 19100, label = 'EUA:', y = 19100, x = days, description = '19100 casos confirmados no 18 dia'), data = confirmed_US) +
+  # geom_mark_ellipse(aes(filter = Confirmed == 12462 & days == 18, label = 'Itália:', y = 12462, x = days, description = '12462 casos confirmados no 18 dia'), data = confirmed_italy) +
+  # geom_mark_ellipse(aes(filter = Confirmed == 793 & days == 8, label = 'Dia 8:', y = 793, x = days, description = '793 casos no Brasil, 1694 casos na Itália, 959 nos EUA'), data = confirmed_brazil) +
   
   theme_hc() +
   theme(plot.title.position = 'plot',
