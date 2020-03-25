@@ -51,6 +51,9 @@ data <- confirmed_clean %>%
   
 data_wider <- data %>% 
   pivot_wider(names_from = Case, values_from = Total)
+
+data_wider <- data_wider %>% 
+  mutate(Ativos = Confirmed - Deaths - Recovered)
   
 saveRDS(data, "data.rds")
 saveRDS(data_wider, "data_wider.rds")
