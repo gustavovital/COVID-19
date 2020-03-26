@@ -118,44 +118,55 @@ data_wider %>%
 # Brasil, EUA, Italia ----
 
 data_wider %>% 
-  filter(`Country/Region` == 'Italy' | `Country/Region` == 'US' | `Country/Region` == 'Brazil') -> compared
+  filter(`Country/Region` == 'Italy' | `Country/Region` == 'US' | `Country/Region` == 'Brazil'| `Country/Region` == 'Spain' | `Country/Region` == 'Germany'| `Country/Region` == 'France') -> compared
 
-compared %>% 
-  filter(`Country/Region` == 'Brazil', Confirmed > 99) -> confirmed_brazil
+compared %>% filter(`Country/Region` == 'Brazil', Confirmed > 99) -> confirmed_brazil
+compared %>% filter(`Country/Region` == 'Spain', Confirmed > 99) -> confirmed_Spain
+compared %>% filter(`Country/Region` == 'Germany', Confirmed > 99) -> confirmed_Germany
+compared %>% filter(`Country/Region` == 'France', Confirmed > 99) -> confirmed_France
+compared %>% filter(`Country/Region` == 'US', Confirmed > 99) -> confirmed_US
+compared %>% filter(`Country/Region` == 'Italy', Confirmed > 99) -> confirmed_italy
 
 confirmed_brazil$days <- 1:(nrow(confirmed_brazil))
-
-compared %>% 
-  filter(`Country/Region` == 'US', Confirmed > 99) -> confirmed_US
-
 confirmed_US$days <- 1:(nrow(confirmed_US))
-
-compared %>% 
-  filter(`Country/Region` == 'Italy', Confirmed > 99) -> confirmed_italy
-
 confirmed_italy$days <- 1:(nrow(confirmed_italy))
+confirmed_Spain$days <- 1:(nrow(confirmed_Spain))
+confirmed_France$days <- 1:(nrow(confirmed_France))
+confirmed_Germany$days <- 1:(nrow(confirmed_Germany))
 
-Confirmed <- tibble(Days = c(confirmed_brazil$days, confirmed_US$days, confirmed_italy$days),
-                    Country = c(confirmed_brazil$`Country/Region`, confirmed_US$`Country/Region`, confirmed_italy$`Country/Region`),
-                    Confirmed = c(confirmed_brazil$Confirmed, confirmed_US$Confirmed, confirmed_italy$Confirmed))
+
+Confirmed <- tibble(Days = c(confirmed_brazil$days, confirmed_US$days, confirmed_italy$days, confirmed_Spain$days, confirmed_France$days, confirmed_Germany$days),
+                    Country = c(confirmed_brazil$`Country/Region`, confirmed_US$`Country/Region`, confirmed_italy$`Country/Region`, confirmed_Spain$`Country/Region`, confirmed_France$`Country/Region`, confirmed_Germany$`Country/Region`),
+                    Confirmed = c(confirmed_brazil$Confirmed, confirmed_US$Confirmed, confirmed_italy$Confirmed, confirmed_Spain$Confirmed, confirmed_France$Confirmed, confirmed_Germany$Confirmed))
 
 
 
 ggplot(NULL) +
-  geom_bar(aes(y = Confirmed, fill = 'EUA', x = days), data = confirmed_US, stat = "identity", alpha = .8) +
-  geom_bar(aes(y = Confirmed, fill = 'Italia', x = days), data = confirmed_italy, stat = "identity", alpha = .5) +
-  geom_bar(aes(y = Confirmed, fill = 'Brasil', x = days), data = confirmed_brazil, stat = "identity", alpha = .8) +
-  scale_fill_manual(values = wes_palette('GrandBudapest1'), name = NULL) +
+  geom_line(aes(y = Confirmed, colour = 'EUA', x = days), data = confirmed_US, stat = "identity",  alpha = .7, size = 2) +
+  geom_line(aes(y = Confirmed, colour = 'Italia', x = days), data = confirmed_italy, stat = "identity",  alpha = .7, size = 2) +
+  geom_line(aes(y = Confirmed, colour = 'Brasil', x = days), data = confirmed_brazil, stat = "identity",  alpha = .7, size = 2) +
+  geom_line(aes(y = Confirmed, colour = 'Espanha', x = days), data = confirmed_Spain, stat = "identity",  alpha = .7, size = 2) +
+  geom_line(aes(y = Confirmed, colour = 'França', x = days), data = confirmed_France, stat = "identity",  alpha = .7, size = 2) +
+  geom_line(aes(y = Confirmed, colour = 'Alemanha', x = days), data = confirmed_Germany, stat = "identity",  alpha = .7, size = 2) +
+  
+  scale_colour_manual(values = viridis::viridis(6), name = NULL) +
   labs(title = expression(bold('Novos Casos de CoronaVirus')~'(> 100 Casos)'), subtitle = 'Comparação entre Itália x Brasil x EUA', x = 'Dias a partir do 100 caso confirmado', y = NULL,
        caption = 'Fonte: CSSEGISandData\nElaboração: @gustavoovital') +
-  # geom_mark_ellipse(aes(filter = Confirmed == 19100, label = 'EUA:', y = 19100, x = days, description = '19100 casos confirmados no 18 dia'), data = confirmed_US) +
-  # geom_mark_ellipse(aes(filter = Confirmed == 12462 & days == 18, label = 'Itália:', y = 12462, x = days, description = '12462 casos confirmados no 18 dia'), data = confirmed_italy) +
-  # geom_mark_ellipse(aes(filter = Confirmed == 793 & days == 8, label = 'Dia 8:', y = 793, x = days, description = '793 casos no Brasil, 1694 casos na Itália, 959 nos EUA'), data = confirmed_brazil) +
-  
-  theme_hc() +
+  theme_bw() +
   theme(plot.title.position = 'plot',
         text = element_text(family = 'Bookman'),
         plot.title = element_text(size = 25, colour = 'gray25'),
         plot.subtitle = element_text(size = 25, colour = 'gray45'),
         plot.caption = element_text(size = 15, colour = 'gray45'))
   
+
+
+compared %>% 
+  filter(Date > as.Date('2020-02-15')) %>% 
+  ggplot(aes(Date, Ativos, colour = `Country/Region`, size = Deaths/Confirmed)) +
+  geom_point(aes(group = seq_along(Date)), alpha = .5) +
+  geom_line(size = .5) +
+  scale_colour_manual(values = viridis::viridis(7), name = NULL) +
+  gganimate::transition_reveal(Date) -> gif_pet
+
+animate(gif_pet, width = 700)
