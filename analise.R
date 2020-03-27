@@ -160,13 +160,44 @@ ggplot(NULL) +
         plot.caption = element_text(size = 15, colour = 'gray45'))
   
 
+data_wider %>% 
+  filter(`Country/Region` == 'Italy' | `Country/Region` == 'US' | `Country/Region` == 'Brazil'| `Country/Region` == 'Spain' | `Country/Region` == 'Germany'| `Country/Region` == 'France') -> compared
+
+compared <- compared %>% 
+  mutate(Mortalidade = Deaths/Confirmed,
+         Mortalidade_fct = ifelse(Mortalidade == 0, '0%', 
+                              ifelse(Mortalidade > 0 & Mortalidade < 0.05, '[0% - 5%)',
+                                     ifelse(Mortalidade >= 0.05 & Mortalidade < 0.075, '[5% - 7,5%)',
+                                            ifelse(Mortalidade >= 0.075 & Mortalidade < 0.1,
+                                                   '[7,5% - 10%)', '>10%')))))
+
+compared$Mortalidade_fct <- ifelse(is.na(compared$Mortalidade), '0%', compared$Mortalidade_fct)
+compared$Mortalidade_fct <- factor(compared$Mortalidade_fct, levels = c('0%', '[0% - 5%)', '[5% - 7,5%)', '[7,5% - 10%)', '>10%'))
+
+
 
 compared %>% 
-  filter(Date > as.Date('2020-02-15')) %>% 
-  ggplot(aes(Date, Ativos, colour = `Country/Region`, size = Deaths/Confirmed)) +
+  filter(Date > as.Date('2020-02-29')) %>% 
+  ggplot(aes(Date, Ativos, colour = `Country/Region`, size = Mortalidade_fct)) +
   geom_point(aes(group = seq_along(Date)), alpha = .5) +
-  geom_line(size = .2) +
-  scale_colour_manual(values = viridis::viridis(7), name = NULL) +
-  gganimate::transition_reveal(Date) -> gif_pet
+  geom_line(size = .1) +
+  scale_colour_manual(values = viridis::viridis(7), name = NULL, guide = "none") +
+  scale_size_manual(values = c(2, 5, 7, 10, 17), name = 'Taxa de Mortalidade') +
+  geom_text(aes(x = max(Date)+1.3, label = sprintf("%s", `Country/Region`)), hjust=0, size = 5) +
+  scale_x_date(limits = c(as.Date('2020-02-29'), as.Date('2020-03-30')), date_breaks = '1 week', labels=scales::date_format("%D")) +
+  
+  labs(title = 'Evolução da Taxa de Mortalidade e do Número de Casos Ativos \ndo COVID-19 no Mês de Março de 2020',
+       subtitle = 'Subdivisão por Paises, Conforme Especificado', x = NULL, y = 'Número de Casos',
+       caption = 'Fonte: CSSEGISandData\nElaboração: @gustavoovital/PET-Economia UFF') +
+  
+  guides(size = guide_legend(title.position="top", title.hjust = 0.5)) +
+  
+  theme_hc() +
+  theme(text = element_text(family = 'Bookman'),
+        plot.title = element_text(size = 20, colour = 'gray30'),
+        plot.subtitle = element_text(size = 16, colour = 'gray40'),
+        plot.caption = element_text(size = 15, colour = 'gray45')) +
+  transition_reveal(Date) -> gif_pet
 
-animate(gif_pet, width = 700)
+gif <- animate(gif_pet, fps = 10, width = 700)
+magick::image_write(gif, path="gif_pet.gif")
