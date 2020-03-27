@@ -142,14 +142,14 @@ Confirmed <- tibble(Days = c(confirmed_brazil$days, confirmed_US$days, confirmed
 
 
 ggplot(NULL) +
-  geom_line(aes(y = Confirmed, colour = 'EUA', x = days), data = confirmed_US, stat = "identity",  alpha = .7, size = .8) +
-  geom_line(aes(y = Confirmed, colour = 'Italia', x = days), data = confirmed_italy, stat = "identity",  alpha = .7, size = .8) +
-  geom_line(aes(y = Confirmed, colour = 'Brasil', x = days), data = confirmed_brazil, stat = "identity",  alpha = .7, size = .8) +
-  geom_line(aes(y = Confirmed, colour = 'Espanha', x = days), data = confirmed_Spain, stat = "identity",  alpha = .7, size = .8) +
-  geom_line(aes(y = Confirmed, colour = 'França', x = days), data = confirmed_France, stat = "identity",  alpha = .7, size = .8) +
-  geom_line(aes(y = Confirmed, colour = 'Alemanha', x = days), data = confirmed_Germany, stat = "identity",  alpha = .7, size = .8) +
+  geom_bar(aes(y = Confirmed, fill = 'EUA', x = days), data = confirmed_US, stat = "identity",  alpha = .3, size = .8) +
+  geom_bar(aes(y = Confirmed, fill = 'Italia', x = days), data = confirmed_italy, stat = "identity",  alpha = .3, size = .8) +
+  geom_bar(aes(y = Confirmed, fill = 'Brasil', x = days), data = confirmed_brazil, stat = "identity",  alpha = .9, size = .8) +
+  geom_bar(aes(y = Confirmed, fill = 'Espanha', x = days), data = confirmed_Spain, stat = "identity",  alpha = .3, size = .8) +
+  geom_bar(aes(y = Confirmed, fill = 'França', x = days), data = confirmed_France, stat = "identity",  alpha = .3, size = .8) +
+  geom_bar(aes(y = Confirmed, fill = 'Alemanha', x = days), data = confirmed_Germany, stat = "identity",  alpha = .3, size = .8) +
   
-  scale_colour_manual(values = viridis::viridis(6), name = NULL) +
+  scale_fill_manual(values = viridis::viridis(7), name = NULL) +
   labs(title = expression(bold('Novos Casos de CoronaVirus')~'(> 100 Casos)'), subtitle = 'Comparação entre Itália x Brasil x EUA', x = 'Dias a partir do 100 caso confirmado', y = NULL,
        caption = 'Fonte: CSSEGISandData\nElaboração: @gustavoovital') +
   theme_bw() +

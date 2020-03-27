@@ -19,26 +19,27 @@ recovered <- read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19
 
 start <- as.Date('2020-01-22')
 
-# Acertando o tamanho ----
+# manipulação dos dados ----
 
-confirmed <- confirmed[-length(confirmed)]
-deaths <- deaths[-length(deaths)]
+confirmed_clean <- confirmed %>% 
+  pivot_longer(-c(`Province/State`, `Country/Region`, Lat, Long), names_to = 'Date', values_to = 'Total') %>% 
+  select(`Country/Region`, Total, Date)
 
+deaths_clean <- deaths %>% 
+  pivot_longer(-c(`Province/State`, `Country/Region`, Lat, Long), names_to = 'Date', values_to = 'Total') %>% 
+  select(`Country/Region`, Total, Date)
+
+recovered_clean <- recovered %>% 
+  pivot_longer(-c(`Province/State`, `Country/Region`, Lat, Long), names_to = 'Date', values_to = 'Total') %>% 
+  select(`Country/Region`, Total, Date)
+
+recovered_clean %>% 
+  left_join(deaths_clean) %>% 
+  left_join(confirmed_clean) 
 
 data.confirmed <- seq(start, length.out = length(confirmed[,5:ncol(confirmed)]), by = 'd')
 data.deaths <- seq(start, length.out = length(deaths[,5:ncol(deaths)]), by = 'd')
 data.recovered <- seq(start, length.out = length(recovered[,5:ncol(recovered)]), by = 'd')
-
-# manipulação dos dados ----
-
-confirmed_clean <- confirmed %>% 
-  pivot_longer(-c(`Province/State`, `Country/Region`, Lat, Long), names_to = 'Date', values_to = 'Total') 
-
-deaths_clean <- deaths %>% 
-  pivot_longer(-c(`Province/State`, `Country/Region`, Lat, Long), names_to = 'Date', values_to = 'Total') 
-
-recovered_clean <- recovered %>% 
-  pivot_longer(-c(`Province/State`, `Country/Region`, Lat, Long), names_to = 'Date', values_to = 'Total') 
 
 confirmed_clean$Date <- rep(data.confirmed, nrow(confirmed))
 deaths_clean$Date <- rep(data.confirmed, nrow(deaths))
@@ -51,16 +52,16 @@ recovered_clean$Case <- 'Recovered'
 data <- confirmed_clean %>% 
   full_join(deaths_clean) %>% 
   full_join(recovered_clean) %>% 
-  select(`Country/Region`, Date, Total, Case) %>% 
   group_by(Date, `Country/Region`, Case) %>% 
   summarise(Total = sum(Total)) 
-  
-data_wider <- data %>% 
-  pivot_wider(names_from = Case, values_from = Total)
 
-data_wider <- data_wider %>% 
+data_wider <- data %>% 
+  pivot_wider(names_from = Case, values_from = Total) %>% 
   mutate(Ativos = Confirmed - Deaths - Recovered)
-  
+
+data <- data_wider %>% 
+  pivot_longer(-c(`Country/Region`, Date), names_to = 'Case', values_to = 'Total')
+
 saveRDS(data, "data.rds")
 saveRDS(data_wider, "data_wider.rds")
 
