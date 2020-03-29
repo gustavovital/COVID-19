@@ -8,7 +8,6 @@
 library(tidyverse)
 library(ggthemes)
 library(wesanderson)
-library(ggforce)
 library(gganimate)
 
 # base de dados ----
@@ -79,7 +78,7 @@ data_wider %>%
   scale_fill_manual(values = wes_palette('Royal2'), name = NULL) +
   scale_colour_manual(values = wes_palette('Royal2'), name = NULL) +
   
-  annotate("text", x = subset(data_wider, Ativos == 7577)$Date, y = 7877, 
+  annotate("text", x = subset(data_wider, Ativos == 7577)$Date, y = 8900, 
            label = "Pico da Pandemia na\n Korea do Sul", hjust = -.06, family = 'Bookman', colour = 'gray25') +
   
   
