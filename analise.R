@@ -54,13 +54,46 @@ data_wider %>%
         text = element_text(family = 'Bookman', colour = 'gray45'),
         plot.title = element_text(size = 23, colour = 'gray25'),
         plot.subtitle = element_text(size = 17),
-        plot.caption = element_text(size = 15, colour = 'gray45')) +
-  transition_reveal(Date) -> gif
+        plot.caption = element_text(size = 15, colour = 'gray45')) 
   
 
-gif_china <- animate(gif, width = 700)
-magick::image_write(gif_china, path="china.gif")
-    
+# korea do sul ativos x casos ----
+
+data_wider %>% 
+  filter(`Country/Region` == 'China') %>% 
+  ggplot(aes(x = Date)) +
+  geom_area(aes(y = Ativos, fill = 'Casos Ativos'), alpha = .8) +
+  geom_area(aes(y = Recovered, fill = 'Recuperados'), alpha = .5) +
+  geom_area(aes(y = Confirmed, fill = 'Casos Totais'), alpha = .3) +
+  geom_area(aes(y = Deaths, fill = 'Mortos'), alpha = .3) +
+  
+  geom_line(aes(y = Ativos, colour = 'Casos Ativos')) +
+  geom_line(aes(y = Recovered, colour = 'Recuperados')) +
+  geom_line(aes(y = Confirmed, colour = 'Casos Totais')) +
+  geom_line(aes(y = Deaths, colour = 'Mortos')) +
+  
+  scale_x_date(date_labels = "%d-%b", date_breaks = "1 week") +
+  
+  geom_vline(xintercept = subset(data_wider, Ativos == 58108)$Date, size = .1, colour = 'gray5', alpha = 1) +
+  
+  scale_fill_manual(values = wes_palette('Rushmore1'), name = NULL) +
+  scale_colour_manual(values = wes_palette('Rushmore1'), name = NULL) +
+  
+  annotate("text", x = subset(data_wider, Ativos == 58108)$Date, y = 65000, 
+           label = "Pico da Pandemia na China", hjust = -.06, family = 'Bookman', colour = 'gray25') +
+  
+  
+  labs(title = 'Evolução do COVID-19 na China', subtitle = 'Casos Ativos, Totais, e Recuperados', x = NULL, y = NULL,
+       caption = 'Fonte: CSSEGISandData\nElaboração: @gustavoovital') +
+  
+  theme_hc() +
+  theme(legend.position = 'bottom',
+        text = element_text(family = 'Bookman', colour = 'gray45'),
+        plot.title = element_text(size = 23, colour = 'gray25'),
+        plot.subtitle = element_text(size = 17),
+        plot.caption = element_text(size = 15, colour = 'gray45')) 
+
+
 
 
 
