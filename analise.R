@@ -64,7 +64,7 @@ data_wider %>%
   geom_area(aes(y = Ativos, fill = 'Casos Ativos'), alpha = .8) +
   geom_area(aes(y = Recovered, fill = 'Recuperados'), alpha = .5) +
   geom_area(aes(y = Confirmed, fill = 'Casos Totais'), alpha = .3) +
-  geom_area(aes(y = Deaths, fill = 'Mortos'), alpha = .3) +
+  geom_area(aes(y = Deaths, fill = 'Mortos'), alpha = 1) +
   
   geom_line(aes(y = Ativos, colour = 'Casos Ativos')) +
   geom_line(aes(y = Recovered, colour = 'Recuperados')) +
@@ -79,10 +79,10 @@ data_wider %>%
   scale_colour_manual(values = wes_palette('Royal2'), name = NULL) +
   
   annotate("text", x = subset(data_wider, Ativos == 7577)$Date, y = 8900, 
-           label = "Pico da Pandemia na\n Korea do Sul", hjust = -.06, family = 'Bookman', colour = 'gray25') +
+           label = "Pico da Pandemia na\n Coreia do Sul", hjust = -.06, family = 'Bookman', colour = 'gray25') +
   
   
-  labs(title = 'Evolução do COVID-19 na Korea do Sul', subtitle = 'Casos Ativos, Totais, e Recuperados', x = NULL, y = NULL,
+  labs(title = 'Evolução do COVID-19 na Coreia do Sul', subtitle = 'Casos Ativos, Totais, e Recuperados', x = NULL, y = NULL,
        caption = 'Fonte: CSSEGISandData\nElaboração: @gustavoovital') +
   
   theme_hc() +
@@ -90,7 +90,8 @@ data_wider %>%
         text = element_text(family = 'Bookman', colour = 'gray45'),
         plot.title = element_text(size = 23, colour = 'gray25'),
         plot.subtitle = element_text(size = 17),
-        plot.caption = element_text(size = 15, colour = 'gray45')) 
+        plot.caption = element_text(size = 15, colour = 'gray45'),
+        plot.title.position = 'plot') 
 
 # China ----
 

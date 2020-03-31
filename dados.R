@@ -33,10 +33,6 @@ recovered_clean <- recovered %>%
   pivot_longer(-c(`Province/State`, `Country/Region`, Lat, Long), names_to = 'Date', values_to = 'Total') %>% 
   select(`Country/Region`, Total, Date)
 
-recovered_clean %>% 
-  left_join(deaths_clean) %>% 
-  left_join(confirmed_clean) 
-
 data.confirmed <- seq(start, length.out = length(confirmed[,5:ncol(confirmed)]), by = 'd')
 data.deaths <- seq(start, length.out = length(deaths[,5:ncol(deaths)]), by = 'd')
 data.recovered <- seq(start, length.out = length(recovered[,5:ncol(recovered)]), by = 'd')
