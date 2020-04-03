@@ -93,57 +93,6 @@ data_wider %>%
         plot.caption = element_text(size = 15, colour = 'gray45'),
         plot.title.position = 'plot') 
 
-# China ----
-
-data_wider %>% 
-  filter(`Country/Region` == 'China') %>% 
-  ggplot(aes(Recovered, colour = `Country/Region`, size = Confirmed/Deaths)) +
-  geom_path(aes(y = Confirmed), alpha = .3) +
-  geom_point(aes(y = Confirmed), alpha = .3) +
-  theme_bw() +
-  theme(legend.position = 'bottom')
-
-data %>% 
-  filter(Case == 'Confirmed') %>% 
-  group_by(`Country/Region`) %>%
-  filter(Date == as.Date('2020-03-17')) %>% 
-  # summarise(Confirmados = sum(Confirmed),
-  #           Recuperados = sum(Recovered),
-  #           Mortes = sum(Deaths)) %>% 
-  arrange(desc(Total)) %>% 
-  head(30) %>% 
-  ggplot(aes(x = reorder(`Country/Region`, -Total), y = Total)) +
-  geom_col() +
-  coord_flip()
-
-data_wider %>% 
-  group_by(Date) %>%
-  summarise(Confirmados = sum(Confirmed),
-            Recuperados = sum(Recovered),
-            Mortes = sum(Deaths)) %>% 
-  ggplot(aes(x = Date)) +
-  geom_area(aes(y = Confirmados, fill = 'Confirmados'), alpha = .2) +
-  geom_area(aes(y = Recuperados, fill = 'Recuperados'), alpha = .2) +
-  geom_area(aes(y = Mortes, fill = 'Mortes'), alpha = .6) +
-  
-  geom_line(aes(y = Confirmados, colour = 'Confirmados'), size = 1) +
-  geom_line(aes(y = Recuperados, colour = 'Recuperados'), size = 1) +
-  geom_line(aes(y = Mortes, colour = 'Mortes'), size = 1) +
-  
-  scale_fill_manual(values = wes_palette("GrandBudapest1", n = 3), name = NULL) +
-  scale_colour_manual(values = wes_palette("GrandBudapest1", n = 3), name = NULL) +
-  
-  labs(title = 'Evolução do COVID-19 no Mundo', x = NULL, subtitle = 'De Fevereiro à Março, de acordo com o caso',
-       y = NULL, caption = 'Fonte: CSSEGISandData\nElaboração: @gustavoovital') +
-
-  theme_hc() +
-  
-  theme(plot.title = element_text(size = 30, family = 'Bookman', colour = 'gray26'),
-        plot.subtitle = element_text(size = 23, family = 'Bookman', colour = 'gray46'),
-        legend.position = 'bottom') +
-  
-  gganimate::transition_reveal(Date)
-
 # Brasil, EUA, Italia ----
 
 data_wider %>% 
