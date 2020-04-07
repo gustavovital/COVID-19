@@ -9,6 +9,7 @@ library(tidyverse)
 library(ggthemes)
 library(wesanderson)
 library(gganimate)
+library(extrafont)
 
 # base de dados ----
 
@@ -42,7 +43,7 @@ data_wider %>%
   scale_colour_manual(values = wes_palette('Rushmore1'), name = NULL) +
   
   annotate("text", x = subset(data_wider, Ativos == 58108)$Date, y = 65000, 
-           label = "Pico da Pandemia na China", hjust = -.06, family = 'Bookman', colour = 'gray25') +
+           label = "Pico da Pandemia na China", hjust = -.06, family = 'Montserrat', colour = 'gray25') +
   
   
   labs(title = 'Evolução do COVID-19 na China', subtitle = 'Casos Ativos, Totais, e Recuperados', x = NULL, y = NULL,
@@ -50,10 +51,11 @@ data_wider %>%
   
   theme_hc() +
   theme(legend.position = 'bottom',
-        text = element_text(family = 'Bookman', colour = 'gray45'),
+        text = element_text(family = 'Montserrat', colour = 'gray45'),
         plot.title = element_text(size = 23, colour = 'gray25'),
         plot.subtitle = element_text(size = 17),
-        plot.caption = element_text(size = 15, colour = 'gray45')) 
+        plot.caption = element_text(size = 15, colour = 'gray45'),
+        plot.title.position = 'plot') 
   
 
 # korea do sul ativos x casos ----
