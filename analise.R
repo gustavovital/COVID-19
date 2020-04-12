@@ -11,9 +11,11 @@ library(wesanderson)
 library(gganimate)
 library(extrafont)
 
+options(scipen = 999)
+
 # base de dados ----
 
-source('dados.R')
+# source('dados.R')
 
 data <- readRDS('data.rds')
 data_wider <- readRDS('data_wider.rds')
@@ -95,10 +97,69 @@ data_wider %>%
         plot.caption = element_text(size = 15, colour = 'gray45'),
         plot.title.position = 'plot') 
 
+# 1000 casos, e depois? ----
+
+data_wider %>% 
+  filter(`Country/Region` == 'Italy' | 
+           `Country/Region` == 'US' | 
+           `Country/Region` == 'Brazil'| 
+           `Country/Region` == 'Spain' | 
+           `Country/Region` == 'Iran'| 
+           `Country/Region` == 'France') -> data_1000
+
+data_1000 %>%  filter(`Country/Region` == 'US', Confirmed > 20000) -> confirmed_US
+data_1000 %>%  filter(`Country/Region` == 'Italy', Confirmed > 20000) -> confirmed_Italy
+data_1000 %>%  filter(`Country/Region` == 'Brazil', Confirmed <= 20000) -> confirmed_Brazil
+data_1000 %>%  filter(`Country/Region` == 'Spain', Confirmed > 20000) -> confirmed_Spain
+data_1000 %>%  filter(`Country/Region` == 'Iran', Confirmed > 20000) -> confirmed_Iran
+data_1000 %>%  filter(`Country/Region` == 'France', Confirmed > 20000) -> confirmed_France
+
+confirmed_Brazil <-  confirmed_Brazil$Confirmed
+
+data_fore <- matrix(ncol = 6, nrow = (length(confirmed_Brazil) + nrow(confirmed_US)))
+
+data_fore[1:length(confirmed_Brazil), 1] <- confirmed_Brazil
+data_fore[81:102, 2] <- confirmed_US$Confirmed
+data_fore[81:102, 3] <- confirmed_Italy$Confirmed[1:22]
+data_fore[81:102, 4] <- confirmed_Spain$Confirmed[1:22]
+data_fore[81:102, 5] <- confirmed_Iran$Confirmed[1:22]
+data_fore[81:102, 6] <- confirmed_France$Confirmed[1:22]
+
+
+colnames(data_fore) <- c('Brazil', 'US', 'Italy', 'Spain', 'Iran', 'France')
+data_fore <- as.data.frame(data_fore)
+
+data_fore$Dias <- c(rep(NA, 80), seq(1:22))
+data_fore$Indice <- seq(1:nrow(data_fore))
+
+
+data_fore %>% 
+  ggplot(aes(Indice)) +
+  geom_line(aes(y = Brazil), colour = 'dodgerblue3', size = .8, alpha = .4) + 
+  geom_line(aes(y = US), colour = 'tomato4', size = .8, alpha = .4) +
+  geom_line(aes(y = Italy), colour = 'tomato2', size = .8, alpha = .4) +
+  geom_line(aes(y = France), colour = 'darkred', size = .8, alpha = .4) +
+  geom_line(aes(y = Spain), colour = 'red', size = .8, alpha = .4) +
+  geom_line(aes(y = Iran), colour = 'tomato3', size = .8, alpha = .4) +
+  
+  geom_vline(xintercept = 80.5, alpha = .05, size = 20) +
+  geom_hline(yintercept = 20000, alpha = .05, size = 20) +
+  
+  xlim(70,100) +
+  scale_y_log10(limits = c(1000, 1000000)) +
+  theme_hc() 
+
+
+
 # Brasil, EUA, Italia ----
 
 data_wider %>% 
-  filter(`Country/Region` == 'Italy' | `Country/Region` == 'US' | `Country/Region` == 'Brazil'| `Country/Region` == 'Spain' | `Country/Region` == 'Germany'| `Country/Region` == 'France') -> compared
+  filter(`Country/Region` == 'Italy' | 
+           `Country/Region` == 'US' | 
+           `Country/Region` == 'Brazil'| 
+           `Country/Region` == 'Spain' | 
+           `Country/Region` == 'Germany'| 
+           `Country/Region` == 'France') -> compared
 
 compared %>% filter(`Country/Region` == 'Brazil', Confirmed > 99) -> confirmed_brazil
 compared %>% filter(`Country/Region` == 'Spain', Confirmed > 99) -> confirmed_Spain
