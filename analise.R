@@ -135,23 +135,42 @@ data_fore$Indice <- seq(1:nrow(data_fore))
 
 data_fore %>% 
   ggplot(aes(Indice)) +
-  geom_line(aes(y = Brazil), colour = 'dodgerblue3', size = .8, alpha = .4) + 
-  geom_line(aes(y = US), colour = 'tomato4', size = .8, alpha = .4) +
-  geom_line(aes(y = Italy), colour = 'tomato2', size = .8, alpha = .4) +
-  geom_line(aes(y = France), colour = 'darkred', size = .8, alpha = .4) +
-  geom_line(aes(y = Spain), colour = 'red', size = .8, alpha = .4) +
-  geom_line(aes(y = Iran), colour = 'tomato3', size = .8, alpha = .4) +
+  geom_line(aes(y = Brazil, colour = 'Brasil'), size = 2, alpha = .4) + 
+  geom_line(aes(y = US, colour = 'EUA'), size = 2, alpha = .4) +
+  geom_line(aes(y = Italy, colour = 'Itália'), size = 2, alpha = .4) +
+  geom_line(aes(y = France, colour = 'França'), size = 2, alpha = .4) +
+  geom_line(aes(y = Spain, colour = 'Espanha'), size = 2, alpha = .4) +
+  geom_line(aes(y = Iran, colour = 'Iran'), size = 2, alpha = .4) +
   
-  geom_vline(xintercept = 80.5, alpha = .05, size = 20) +
-  geom_hline(yintercept = 20000, alpha = .05, size = 20) +
+  scale_colour_manual(values = viridis::inferno(8), name = '') +
   
-  xlim(70,100) +
-  scale_y_log10(limits = c(1000, 1000000)) +
-  theme_hc() 
+  labs(title = expression(bold('Evolução dos Casos de Coronavirus')~'(Pós 20.000 Casos Confirmados)'),
+       subtitle = 'Brasil, EUA, Iran, Espanha, França, Itália',
+       x = 'Dias após o 20.000 caso', y = '',
+       caption = 'Fonte: CSSEGISandData\nElaboração: @gustavoovital') +
+  
+  geom_vline(xintercept = 80.5, alpha = .05, size = .8) +
+  geom_hline(yintercept = 20000, alpha = .05, size = .8) +
+  
+  scale_x_continuous(limits = c(75, 100),
+                     breaks = 75:100,
+                     label = c(rep('', 6), 1:20)) +
+  
+  theme_bw() +
+  theme(plot.title.position = 'plot',
+        text = element_text(family = 'times'),
+        plot.title = element_text(size = 20, colour = 'gray20'),
+        plot.subtitle = element_text(size = 18, colour = 'gray40'),
+        axis.ticks = element_blank(),
+        axis.title.x = element_text(size = 20, hjust = 0, vjust=-1, colour = 'gray20'),
+        axis.text.x = element_text(size = 15, colour = 'gray40'),
+        axis.text.y = element_text(size = 15, colour = 'gray40'),
+        plot.caption = element_text(size = 20, colour = 'gray25'),
+        legend.text = element_text(color = "gray40", size = 15))
 
 
 
-# Brasil, EUA, Italia ----
+  # Brasil, EUA, Italia ----
 
 data_wider %>% 
   filter(`Country/Region` == 'Italy' | 
