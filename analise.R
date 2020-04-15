@@ -146,7 +146,7 @@ data_fore %>%
   
   labs(title = expression(bold('Evolução dos Casos de Coronavirus')~'(Pós 20.000 Casos Confirmados)'),
        subtitle = 'Brasil, EUA, Iran, Espanha, França, Itália',
-       x = 'Dias após o 20.000 caso', y = '',
+       x = 'Dias após o 20.000 caso', y = 'Número de Casos',
        caption = 'Fonte: CSSEGISandData\nElaboração: @gustavoovital') +
   
   geom_vline(xintercept = 80.5, alpha = .05, size = .8) +
@@ -156,13 +156,14 @@ data_fore %>%
                      breaks = 75:100,
                      label = c(rep('', 6), 1:20)) +
   
-  theme_bw() +
+  theme_hc() +
   theme(plot.title.position = 'plot',
         text = element_text(family = 'times'),
         plot.title = element_text(size = 20, colour = 'gray20'),
         plot.subtitle = element_text(size = 18, colour = 'gray40'),
         axis.ticks = element_blank(),
-        axis.title.x = element_text(size = 20, hjust = 0, vjust=-1, colour = 'gray20'),
+        axis.title.x = element_text(size = 18, hjust = 0, vjust=-1, colour = 'gray20'),
+        axis.title.y = element_text(size = 18, colour = 'gray20'),
         axis.text.x = element_text(size = 15, colour = 'gray40'),
         axis.text.y = element_text(size = 15, colour = 'gray40'),
         plot.caption = element_text(size = 20, colour = 'gray25'),
