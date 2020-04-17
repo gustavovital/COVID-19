@@ -11,6 +11,7 @@
 library(tidyverse)
 library(data.table)
 library(plotly)
+library(viridis)
 
 # Base de dados -----
 
@@ -65,3 +66,29 @@ data_cidades %>%
   
 
   theme(legend.position = 'bottom') -> grafico1; ggplotly(grafico1)
+
+
+data_cidades %>% 
+  filter(Cidade != '') %>% 
+  select(Cidade) %>% 
+  unique() %>% 
+  count(Cidade) %>% 
+  select(Cidade) %>% 
+  as.vector() %>%
+  unlist() -> cidades
+
+cidade_names <- list(cidades)
+names(cidade_names) <- cidades
+
+data_cidades %>% 
+  filter(Cidade != '') %>% 
+  filter(Cidade == 'Rio de Janeiro' | Cidade == 'Niterói') %>% 
+  ggplot(aes(Data, `Novos casos`, fill = Cidade)) +
+  geom_col(position = 'dodge') +
+  
+  scale_fill_manual(values = inferno(3)) +
+  
+  labs(title = 'Evolução dos Casos de Coronavirus.') 
+  
+
+  
