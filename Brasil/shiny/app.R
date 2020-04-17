@@ -19,8 +19,9 @@ ui <- fluidPage(
   titlePanel('COVID-19 Brasil'),
   sidebarLayout(
     
-    sidebarPanel(textInput("city", "Qual Cidade Desejada?", 'Niterói')),
-    mainPanel(plotlyOutput('trend')
+    sidebarPanel(textInput("city", "Qual Cidade Desejada?", 'Niterói'),
+                 textInput("city2", "Qual Cidade Desejada?", 'Rio de Janeiro')),
+    mainPanel(plotlyOutput('grafico1')
     )
   )
 )
@@ -29,18 +30,17 @@ ui <- fluidPage(
 
 server <- function(input, output) {
   
-  output$trend <- renderPlotly({
+  output$grafico1 <- renderPlotly({
     
     
     data_cidades %>% 
-      filter(Cidade == input$city) %>% 
+      filter(Cidade == input$city | Cidade == input$city2) %>% 
       ggplot(aes(Data, Confirmados, colour = Cidade)) +
       geom_line(size = 3, alpha = .4) +
       geom_point(size = 3, alpha = .4) +
       
       labs(title = 'Evolução dos Casos de Coronavirus.') +
-      scale_y_log10() +
-      
+
       
       theme_gray() -> grafico1
     
