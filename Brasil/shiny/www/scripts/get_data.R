@@ -1,12 +1,4 @@
-# Pegar base de dados das cidades e estados do Brasil, de acordo com a base de dados 
-# disponibilizadas pelo brasil.io
-# 
-# Autor: @gustavoovital
-# Data: 06/04/2020
-
-# start_time <- Sys.time()
-
-# Pacotes Necessários ----
+# get_data
 
 library(tidyverse)
 library(data.table)
@@ -43,25 +35,7 @@ dt %>%
          `Taxa de Mortalidade` = last_available_death_rate) %>% 
   select(Data, Confirmados, Cidade, `População Estimada`, `Novos casos`, `Novas Mortes`, `Taxa de Mortalidade`) -> data_cidades
 
-saveRDS(data_estados, "Brasil/data_estados.rds")
-saveRDS(data_cidades, "Brasil/data_cidades.rds")
+saveRDS(data_estados, "www/datas/data_estados.rds")
+saveRDS(data_cidades, "www/datas/data_cidades.rds")
 
 rm(list = ls())  
-
-# end_time <- Sys.time()
-# end_time - start_time 
-
-# Time difference of 1.765079 secs
-
- 
-data_cidades %>% 
-  filter(Cidade != '') %>% 
-  filter(Cidade == 'Rio de Janeiro') %>% 
-  ggplot(aes(Data, Confirmados, colour = Cidade)) +
-  geom_line(size = 3, alpha = .4) +
-  geom_point(size = 3, alpha = .4) +
-  
-  labs(title = 'Evolução dos Casos de Coronavirus.') +
-  
-
-  theme(legend.position = 'bottom') -> grafico1; ggplotly(grafico1)
