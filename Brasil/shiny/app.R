@@ -4,6 +4,8 @@ require(shiny)
 require(shinydashboard)
 require(plotly)
 require(viridis)
+require(ggthemes)
+require(R.utils)
 
 # Base de dados ----
 
@@ -33,9 +35,10 @@ names(cidades_dois) <- c('-', cidades)
 
 ui <- fluidPage(
   
-  theme = shinythemes::shinytheme('yeti'),
+  theme = shinythemes::shinytheme('superhero'),
   
-  titlePanel('COVID-19 Brasil'),
+  h1('COVID-19 no Brasil'), 
+  h3('Uma comparação de casos e mortes nas cidades brasileiras'),
   sidebarLayout(position = "left",
     sidebarPanel(
       selectInput("city", "Qual Cidade Desejada?", choices = cidades, selected = 'Niterói'),
@@ -44,9 +47,10 @@ ui <- fluidPage(
     
       mainPanel(
         plotlyOutput('grafico3'),
+        br(),
         fluidRow(
           column(6, plotlyOutput('grafico1')),
-          column(6, plotlyOutput('grafico2')),
+          column(6, plotlyOutput('grafico2')),install.packages('R.utils')
         )
            
        )
@@ -65,14 +69,14 @@ server <- function(input, output) {
       ggplot(aes(Data, `Novos casos`, fill = Cidade)) +
       geom_col(position = 'dodge', alpha = .6) +
       
-      scale_fill_manual(values = viridis(3)) +
+      scale_fill_manual(values = magma(3)) +
       
-      labs(title = 'Novos Casos de Coronavirus por Dia') +
-      theme_gray() -> grafico1
+      labs(title = 'Novos Casos de Coronavirus por Dia', x = NULL) +
+      theme_economist() -> grafico1
     
-      ggplotly(grafico1)
-      
-      
+      ggplotly(grafico1) %>% 
+        config(displayModeBar = F) %>%
+        layout(legend = list(orientation = "h", x = 0.4, y = -0.2))
         
       
   })
@@ -82,15 +86,17 @@ server <- function(input, output) {
     
     data_cidades %>% 
       filter(Cidade == input$city | Cidade == input$city2) %>% 
-      ggplot(aes(Data, `Novas Mortes`, fill = Cidade)) +
-      geom_col(position = 'dodge', alpha = .6) +
+      ggplot(aes(Data, `Novas Mortes`, colour = Cidade)) +
+      geom_line(alpha = .6) +
       
-      scale_fill_manual(values = inferno(4)) +
+      scale_colour_manual(values = magma(3)) +
       
-      labs(title = 'Novas Mortes por Coronavirus por Dia') +
-      theme_gray() -> grafico1
+      labs(title = 'Novas Mortes por Coronavirus por Dia', x = NULL) +
+      theme_economist() -> grafico1
     
-    ggplotly(grafico1)
+    ggplotly(grafico1) %>% 
+      config(displayModeBar = F) %>%
+      layout(legend = list(orientation = "h", x = 0.4, y = -0.2))
     
   })
   
@@ -105,10 +111,12 @@ server <- function(input, output) {
       
       scale_colour_manual(values = magma(3)) +
 
-      labs(title = 'Evolução dos Casos de Coronavirus.') +
-      theme_gray() -> grafico1
+      labs(title = 'Evolução dos Casos de Coronavirus.', x = NULL) +
+      theme_economist()  -> grafico1
     
-    ggplotly(grafico1)
+    ggplotly(grafico1) %>% 
+      config(displayModeBar = F) %>%
+      layout(legend = list(orientation = "h", x = 0.4, y = -0.2))
     
   })
   
