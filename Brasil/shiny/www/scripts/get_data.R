@@ -2,7 +2,7 @@
 
 library(tidyverse)
 library(data.table)
-library(plotly)
+library(R.utils)
 
 # Base de dados -----
 

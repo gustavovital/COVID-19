@@ -1,11 +1,10 @@
 # shinyapp
 
-require(shiny)
-require(shinydashboard)
-require(plotly)
-require(viridis)
-require(ggthemes)
-require(R.utils)
+library(shiny)
+library(shinydashboard)
+library(plotly)
+library(viridis)
+library(ggthemes)
 
 # Base de dados ----
 
@@ -50,7 +49,7 @@ ui <- fluidPage(
         br(),
         fluidRow(
           column(6, plotlyOutput('grafico1')),
-          column(6, plotlyOutput('grafico2')),install.packages('R.utils')
+          column(6, plotlyOutput('grafico2')),
         )
            
        )
