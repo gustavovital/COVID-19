@@ -56,9 +56,10 @@ rm(list = ls())
 
  
 data_cidades %>% 
-  filter(Cidade != '') %>% 
+  group_by(`Novas Mortes`, Data, Cidade) %>% 
+  summarise(`Mortes Totais` = sum(`Novas Mortes`)) %>% 
   filter(Cidade == 'Rio de Janeiro') %>% 
-  ggplot(aes(Data, Confirmados, colour = Cidade)) +
+  ggplot(aes(Data, `Novas Mortes`, colour = Cidade)) +
   geom_line(size = 3, alpha = .4) +
   geom_point(size = 3, alpha = .4) +
   
