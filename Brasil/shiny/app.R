@@ -32,29 +32,69 @@ names(cidades_dois) <- c('-', cidades)
 
 # UI interface ----
 
-ui <- fluidPage(
-  
-  theme = shinythemes::shinytheme('superhero'),
-  
-  h1('COVID-19 no Brasil'), 
-  h3('Uma comparação de casos e mortes nas cidades brasileiras'),
-  sidebarLayout(position = "left",
-    sidebarPanel(
-      selectInput("city", "Qual Cidade Desejada?", choices = cidades, selected = 'Niterói'),
-      selectInput("city2", "Deseja comparar com Alguma outra Cidade?", choices = cidades_dois, selected = '-')
-                 ),
-    
-      mainPanel(
-        plotlyOutput('grafico3'),
-        br(),
-        fluidRow(
-          column(6, plotlyOutput('grafico1')),
-          column(6, plotlyOutput('grafico2')),
+# ui <- fluidPage(
+# 
+#   theme = shinythemes::shinytheme('superhero'),
+# 
+#   h1('COVID-19 no Brasil'),
+#   h3('Uma comparação de casos e mortes nas cidades brasileiras'),
+#   sidebarLayout(position = "left",
+#     sidebarPanel(
+#       selectInput("city", "Qual Cidade Desejada?", choices = cidades, selected = 'Niterói'),
+#       selectInput("city2", "Deseja comparar com Alguma outra Cidade?", choices = cidades_dois, selected = '-')
+#                  ),
+# 
+#       mainPanel(
+#         plotlyOutput('grafico3'),
+#         br(),
+#         fluidRow(
+#           column(6, plotlyOutput('grafico1')),
+#           column(6, plotlyOutput('grafico2')),
+#         )
+# 
+#        )
+#    )
+# )
+
+ui <- 
+  dashboardPage(skin = 'black',
+                
+    dashboardHeader(title = 'O COVID-19 NAS CIDADES DO BRASIL', titleWidth = 450),
+    dashboardSidebar(width = 450,
+                     
+                     sidebarMenu(
+                       
+                       menuItem('Sobre o DashBoard', tabName = 'info', icon = icon('ello')),
+                       menuItem('Evolução das Maiores Cidades do Brasil', tabName = 'bigCities', icon = icon('chart-bar')),
+                       menuItem('Comparações entre as Cidades', tabName = 'compCities', icon = icon('chart-bar'))
+                     )),
+    dashboardBody(
+      
+      tabItems(
+        
+        tabItem(tabName = 'info'),
+        tabItem(tabName = 'bigCities'),
+        tabItem(tabName = 'compCities',
+                
+                sidebarLayout(position = "right",
+                              sidebarPanel(
+                                selectInput("city", "Qual Cidade Desejada?", choices = cidades, selected = 'Niterói'),
+                                selectInput("city2", "Deseja comparar com Alguma outra Cidade?", choices = cidades_dois, selected = '-'),
+                                br(),
+                                'shhhdhd'
+                              ),
+                              
+                              mainPanel(
+                                box(plotlyOutput('evol', height = 800), width = '90%',
+                                    selectizeInput('log', span('Visualizar em Escala ou Logarítimo?'), choices = c('Normal', 'Log'), select = 'Normal'))
+                                
+                                
+                              )
+                )
         )
-           
-       )
-   )
-)
+      )
+    )
+  )
 
 # Server interface ----
 
@@ -99,7 +139,7 @@ server <- function(input, output) {
     
   })
   
-  output$grafico3 <- renderPlotly({
+  output$evol <- renderPlotly({
     
     
     data_cidades %>% 
@@ -107,15 +147,25 @@ server <- function(input, output) {
       ggplot(aes(Data, Confirmados, colour = Cidade, size = `Taxa de Mortalidade`)) +
       geom_point(alpha = .6) +
       geom_line(size = .5, show.legend = FALSE) +
-      
+
       scale_colour_manual(values = magma(3)) +
 
       labs(title = 'Evolução dos Casos de Coronavirus.', x = NULL) +
-      theme_economist()  -> grafico1
+      theme_minimal()  -> evol
     
-    ggplotly(grafico1) %>% 
-      config(displayModeBar = F) %>%
-      layout(legend = list(orientation = "h", x = 0.4, y = -0.2))
+    if(input$log == 'Log'){
+      
+      ggplotly(evol + scale_y_log10()) %>% 
+        config(displayModeBar = F) %>%
+        layout(legend = list(orientation = "h", x = 0.4, y = -0.2))
+      
+    } else{
+      
+      ggplotly(evol) %>% 
+        config(displayModeBar = F) %>%
+        layout(legend = list(orientation = "h", x = 0.4, y = -0.2))
+    }
+    
     
   })
   

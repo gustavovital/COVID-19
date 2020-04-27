@@ -6,7 +6,7 @@ library(R.utils)
 
 # Base de dados -----
 
-dt = fread("https://data.brasil.io/dataset/covid19/caso_full.csv.gz")
+dt = fread("https://data.brasil.io/dataset/covid19/caso_full.csv.gz", encoding = 'UTF-8')
 
 # Base de dados para os estados do Brasil ----
 
