@@ -57,7 +57,7 @@ names(cidades_dois) <- c('-', cidades)
 # )
 
 ui <- 
-  dashboardPage(skin = 'black',
+  dashboardPage(skin = 'red',
                 
     dashboardHeader(title = 'O COVID-19 NAS CIDADES DO BRASIL', titleWidth = 450),
     dashboardSidebar(width = 450,
@@ -144,14 +144,15 @@ server <- function(input, output) {
     
     data_cidades %>% 
       filter(Cidade == input$city | Cidade == input$city2) %>% 
-      ggplot(aes(Data, Confirmados, colour = Cidade, size = `Taxa de Mortalidade`)) +
-      geom_point(alpha = .6) +
-      geom_line(size = .5, show.legend = FALSE) +
+      ggplot(aes(Data, Confirmados, colour = Cidade)) +
+      # geom_point(alpha = .6) +
+      geom_line(size = 3, show.legend = FALSE, alpha = .6) +
 
       scale_colour_manual(values = magma(3)) +
 
       labs(title = 'Evolução dos Casos de Coronavirus.', x = NULL) +
-      theme_minimal()  -> evol
+      theme_minimal() +
+      theme(plot.title.position = 'plot') -> evol
     
     if(input$log == 'Log'){
       
