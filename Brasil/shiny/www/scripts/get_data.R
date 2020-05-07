@@ -29,11 +29,11 @@ dt %>%
   mutate(Data = as.Date(date),
          Confirmados = last_available_confirmed,
          Cidade = city,
-         `População Estimada` = estimated_population_2019,
+         Pop = estimated_population_2019,
          `Novos casos` = new_confirmed,
          `Novas Mortes` = new_deaths,
          `Taxa de Mortalidade` = last_available_death_rate) %>% 
-  select(Data, Confirmados, Cidade, `População Estimada`, `Novos casos`, `Novas Mortes`, `Taxa de Mortalidade`) -> data_cidades
+  select(Data, Confirmados, Cidade, Pop, `Novos casos`, `Novas Mortes`, `Taxa de Mortalidade`) -> data_cidades
 
 saveRDS(data_estados, "www/datas/data_estados.rds")
 saveRDS(data_cidades, "www/datas/data_cidades.rds")

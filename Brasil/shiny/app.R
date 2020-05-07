@@ -144,12 +144,13 @@ server <- function(input, output) {
     
     data_cidades %>% 
       filter(Cidade == input$city | Cidade == input$city2) %>% 
-      ggplot(aes(Data, Confirmados, colour = Cidade)) +
-      # geom_point(alpha = .6) +
-      geom_line(size = 3, show.legend = FALSE, alpha = .6) +
+      ggplot(aes(Data, Confirmados, fill = Cidade, colour = Cidade)) +
+      geom_line(alpha = .6, show.legend = FALSE, size = 2) +
+      geom_area(show.legend = FALSE, alpha = .2, position = 'identity') +
 
-      scale_colour_manual(values = magma(3)) +
-
+      scale_fill_manual(values = magma(4)[2:3]) +
+      scale_colour_manual(values = magma(4)[2:3]) +
+      
       labs(title = 'Evolução dos Casos de Coronavirus.', x = NULL) +
       theme_minimal() +
       theme(plot.title.position = 'plot') -> evol
