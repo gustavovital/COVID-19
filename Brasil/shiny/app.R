@@ -8,7 +8,7 @@ library(ggthemes)
 
 # Base de dados ----
 
-source('www/scripts/get_data.R')
+# source('www/scripts/get_data.R') # DESMARCAR SENAO ESSA PORRA NAO VAI RODAR
 
 data_estados <- readRDS("www/datas/data_estados.rds")
 data_cidades <- readRDS("www/datas/data_cidades.rds")
@@ -24,6 +24,8 @@ data_cidades %>%
   select(Cidade) %>% 
   as.vector() %>%
   unlist() -> cidades
+
+# colnames(data_cidades) <- 
 
 names(cidades) <- cidades
 
@@ -57,7 +59,8 @@ names(cidades_dois) <- c('-', cidades)
 # )
 
 ui <- 
-  dashboardPage(skin = 'red',
+  dashboardPage(
+    skin = 'blue',
                 
     dashboardHeader(title = 'O COVID-19 NAS CIDADES DO BRASIL', titleWidth = 450),
     dashboardSidebar(width = 450,
@@ -78,15 +81,17 @@ ui <-
                 
                 sidebarLayout(position = "right",
                               sidebarPanel(
+                                h4('O Gráfico ao lado mostra a evolução dos casos de CoronaVirus por valores absolutos de uma cidade - isto é - sem levar em consideração uma ponderação por tamanho populacional. É possível ainda uma linha de tendência para a visualização.'),
                                 selectInput("city", "Qual Cidade Desejada?", choices = cidades, selected = 'Niterói'),
                                 selectInput("city2", "Deseja comparar com Alguma outra Cidade?", choices = cidades_dois, selected = '-'),
                                 br(),
-                                'shhhdhd'
+                                h4(span('Abaixo, gráfico com a variação dos casos em escala logarítimica', style = 'color:black; font-weight: bold')),
+                                plotlyOutput('evol_log'),
                               ),
                               
                               mainPanel(
-                                box(plotlyOutput('evol', height = 800), width = '90%',
-                                    selectizeInput('log', span('Visualizar em Escala ou Logarítimo?'), choices = c('Normal', 'Log'), select = 'Normal'))
+                                box(status = 'primary', plotlyOutput('evol', height = 800), width = '90%',
+                                    selectizeInput('log', span('Deseja visualizar com linha de tendência?'), choices = c('Sim', 'Não'), select = 'Não'))
                                 
                                 
                               )
@@ -130,7 +135,7 @@ server <- function(input, output) {
       
       scale_colour_manual(values = magma(3)) +
       
-      labs(title = 'Novas Mortes por Coronavirus por Dia', x = NULL) +
+      labs(x = NULL) +
       theme_economist() -> grafico1
     
     ggplotly(grafico1) %>% 
@@ -139,25 +144,26 @@ server <- function(input, output) {
     
   })
   
+  # Evolução dos casos ----
+  
   output$evol <- renderPlotly({
     
     
     data_cidades %>% 
       filter(Cidade == input$city | Cidade == input$city2) %>% 
-      ggplot(aes(Data, Confirmados, fill = Cidade, colour = Cidade)) +
-      geom_line(alpha = .6, show.legend = FALSE, size = 2) +
-      geom_area(show.legend = FALSE, alpha = .2, position = 'identity') +
+      ggplot(aes(Data, Confirmados, colour = Cidade, size = `Taxa de Mortalidade`)) +
+      # geom_point(alpha = .6) +
+      geom_point(show.legend = FALSE, alpha = .6) +
 
-      scale_fill_manual(values = magma(4)[2:3]) +
-      scale_colour_manual(values = magma(4)[2:3]) +
-      
-      labs(title = 'Evolução dos Casos de Coronavirus.', x = NULL) +
+      scale_colour_manual(values = magma(3)) +
+
+      labs(title = 'Evolução dos Casos de CoronaVirus. \nTaxas de Mortalidades pelas cidades', x = NULL) +
       theme_minimal() +
       theme(plot.title.position = 'plot') -> evol
     
-    if(input$log == 'Log'){
+    if(input$log == 'Sim'){
       
-      ggplotly(evol + scale_y_log10()) %>% 
+      ggplotly(evol + geom_smooth(alpha = .1, se = FALSE)) %>% 
         config(displayModeBar = F) %>%
         layout(legend = list(orientation = "h", x = 0.4, y = -0.2))
       
@@ -167,6 +173,33 @@ server <- function(input, output) {
         config(displayModeBar = F) %>%
         layout(legend = list(orientation = "h", x = 0.4, y = -0.2))
     }
+    
+    
+  })
+  
+  # Evolução LOG ----
+  
+  output$evol_log <- renderPlotly({
+    
+    
+    data_cidades %>% 
+      filter(Cidade == input$city | Cidade == input$city2) %>% 
+      ggplot(aes(Data, Confirmados, colour = Cidade)) +
+      # geom_point(alpha = .6) +
+      geom_line(size = 1, show.legend = FALSE, alpha = .6) +
+      
+      scale_colour_manual(values = magma(3)) +
+      scale_y_log10() +
+      
+      labs(x = NULL) +
+      theme_minimal() +
+      theme(plot.title.position = 'plot') -> evol_log
+
+      
+      ggplotly(evol_log) %>% 
+        config(displayModeBar = F) %>%
+        layout(legend = list(orientation = "h", x = 0.4, y = -0.2))
+    
     
     
   })
