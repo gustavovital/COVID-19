@@ -5,6 +5,7 @@ library(shinydashboard)
 library(plotly)
 library(viridis)
 library(ggthemes)
+library(tidyverse)
 
 # Base de dados ----
 
@@ -34,30 +35,6 @@ names(cidades_dois) <- c('-', cidades)
 
 # UI interface ----
 
-# ui <- fluidPage(
-# 
-#   theme = shinythemes::shinytheme('superhero'),
-# 
-#   h1('COVID-19 no Brasil'),
-#   h3('Uma comparação de casos e mortes nas cidades brasileiras'),
-#   sidebarLayout(position = "left",
-#     sidebarPanel(
-#       selectInput("city", "Qual Cidade Desejada?", choices = cidades, selected = 'Niterói'),
-#       selectInput("city2", "Deseja comparar com Alguma outra Cidade?", choices = cidades_dois, selected = '-')
-#                  ),
-# 
-#       mainPanel(
-#         plotlyOutput('grafico3'),
-#         br(),
-#         fluidRow(
-#           column(6, plotlyOutput('grafico1')),
-#           column(6, plotlyOutput('grafico2')),
-#         )
-# 
-#        )
-#    )
-# )
-
 ui <- 
   dashboardPage(
     skin = 'blue',
@@ -77,6 +54,9 @@ ui <-
         
         tabItem(tabName = 'info'),
         tabItem(tabName = 'bigCities'),
+        
+        # evolução geral ----
+        
         tabItem(tabName = 'compCities',
                 
                 sidebarLayout(position = "right",
@@ -157,20 +137,20 @@ server <- function(input, output) {
 
       scale_colour_manual(values = magma(3)) +
 
-      labs(title = 'Evolução dos Casos de CoronaVirus. \nTaxas de Mortalidades pelas cidades', x = NULL) +
+      labs(title = 'Evolução dos Casos de CoronaVirus. \nE Taxas de Mortalidades pelas cidades', x = NULL) +
       theme_minimal() +
       theme(plot.title.position = 'plot') -> evol
     
     if(input$log == 'Sim'){
       
       ggplotly(evol + geom_smooth(alpha = .1, se = FALSE)) %>% 
-        config(displayModeBar = F) %>%
+        config(displayModeBar = T) %>%
         layout(legend = list(orientation = "h", x = 0.4, y = -0.2))
       
     } else{
       
       ggplotly(evol) %>% 
-        config(displayModeBar = F) %>%
+        config(displayModeBar = T) %>%
         layout(legend = list(orientation = "h", x = 0.4, y = -0.2))
     }
     
