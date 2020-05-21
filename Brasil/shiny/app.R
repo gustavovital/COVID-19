@@ -52,7 +52,8 @@ ui <-
       
       tabItems(
         
-        tabItem(tabName = 'info'),
+        tabItem(tabName = 'info',
+                h3('Com a iniciativa do brasil.io ')),
         tabItem(tabName = 'bigCities'),
         
         # evolução geral ----
@@ -65,7 +66,7 @@ ui <-
                                 selectInput("city", "Qual Cidade Desejada?", choices = cidades, selected = 'Niterói'),
                                 selectInput("city2", "Deseja comparar com Alguma outra Cidade?", choices = cidades_dois, selected = '-'),
                                 br(),
-                                h4(span('Abaixo, gráfico com a variação dos casos em escala logarítimica', style = 'color:black; font-weight: bold')),
+                                h4(span('Escala logarítimica', style = 'color:black; font-weight: bold')),
                                 plotlyOutput('evol_log'),
                               ),
                               
